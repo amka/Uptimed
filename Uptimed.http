@@ -1,0 +1,21 @@
+@Uptimed_HostAddress = http://localhost:5049
+
+POST {{Uptimed_HostAddress}}/register
+Accept: application/json
+
+{
+  "email": "meamka@ya.ru",
+  "password": "meamka1"
+}
+
+### 
+
+GET {{Uptimed_HostAddress}}/api/Todo
+Accept: application/json
+
+###
+
+GET {{Uptimed_HostAddress}}/todos/1
+Accept: application/json
+
+###
