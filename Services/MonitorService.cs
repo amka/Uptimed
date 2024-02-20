@@ -15,6 +15,11 @@ public class MonitorService(UptimedDbContext db, ILogger<MonitorService> logger)
             .ToListAsync();
     }
 
+    public async Task<Monitor?> GetUserMonitorAsync(ApplicationUser user, string id)
+    {
+        return await db.Monitors.FirstOrDefaultAsync(x => x.Owner == user && x.Id == id);
+    }
+
     public async Task<int> GetUserMonitorsCountAsync(ApplicationUser user)
     {
         return await db.Monitors.CountAsync(x => x.Owner == user);

@@ -33,6 +33,18 @@ public class MonitorsController(
         return Ok(new GetMonitorsResponse(monitors, total));
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetMonitorAsync(string id)
+    {
+        var user = await userManager.GetUserAsync(User);
+        if (user == null) return Unauthorized();
+        
+        var monitor = await monitorService.GetUserMonitorAsync(user, id);
+        if (monitor == null) return NotFound();
+        
+        return Ok(monitor);
+    }
+
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType<Monitor>(StatusCodes.Status201Created)]
