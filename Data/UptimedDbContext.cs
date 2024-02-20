@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Uptimed.Models;
+using Monitor = Uptimed.Models.Monitor;
 
 namespace Uptimed.Data;
 
@@ -16,4 +17,7 @@ public class UptimedDbContext : IdentityDbContext<ApplicationUser, UptimedRole, 
     }
 
     public DbSet<Todo> Todos { get; set; }
+
+    public DbSet<Monitor> Monitors { get; set; }
+    // public DbSet<MonitorLog> MonitorLogs { get; set; }
 }
