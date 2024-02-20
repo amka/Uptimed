@@ -22,4 +22,10 @@
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Uptimed.SiteChecker\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Uptimed.SiteChecker\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Uptimed.SiteChecker\obj\Uptimed.SiteChecker.csproj.nuget.dgspec.json" />
+    </ItemGroup>
+
 </Project>
