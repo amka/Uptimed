@@ -13,25 +13,37 @@ namespace Uptimed.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController(UptimedDbContext db, UserManager<ApplicationUser> userManager, TokenService tokenService) : Controller
+public class UserController(UptimedDbContext db, UserManager<ApplicationUser> userManager, TokenService tokenService)
+    : Controller
 {
     [HttpPost("register")]
-    public async Task<IActionResult> CreateUser(RegistrationRequest request)
+    public async Task<IActionResult> RegisterAsync(RegistrationRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
+        var user = new ApplicationUser
+        {
+            UserName = request.Email.Split('@')[0],
+            Email = request.Email,
+        };
+
         var result = await userManager.CreateAsync(
-            new ApplicationUser
-            {
-                UserName = request.Email.Split('@')[0],
-                Email = request.Email,
-            },
+            user,
             request.Password);
 
-        if (!result.Succeeded)
+        // Log in user and return token if registered successfully
+        if (result.Succeeded)
         {
-            request.Password = "";
-            return CreatedAtAction(nameof(CreateUser), new { email = request.Email }, request);
+            var accessToken = tokenService.CreateToken(user);
+            var refreshToken = tokenService.CreateRefreshToken(user);
+            await db.SaveChangesAsync();
+
+            return Ok(new AuthResponse
+            {
+                Email = user.Email!,
+                Token = accessToken,
+                RefreshToken = refreshToken,
+            });
         }
 
         // Handle errors
@@ -93,13 +105,13 @@ public class UserController(UptimedDbContext db, UserManager<ApplicationUser> us
     public async Task<IActionResult> RefreshToken(RefreshTokenRequest request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        
+
         var principal = tokenService.GetPrincipalFromExpiredToken(request.RefreshToken);
         if (principal == null)
         {
             return BadRequest("Invalid access token or refresh token");
         }
-        
+
         var userId = principal.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier).Value;
         var user = await userManager.FindByIdAsync(userId);
 
