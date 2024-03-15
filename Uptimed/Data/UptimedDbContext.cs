@@ -11,13 +11,13 @@ public class UptimedDbContext : IdentityDbContext<ApplicationUser, UptimedRole, 
     {
     }
 
+    public DbSet<Todo> Todos { get; set; }
+
+    public DbSet<Monitor> Monitors { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
     }
-
-    public DbSet<Todo> Todos { get; set; }
-
-    public DbSet<Monitor> Monitors { get; set; }
     // public DbSet<MonitorLog> MonitorLogs { get; set; }
 }

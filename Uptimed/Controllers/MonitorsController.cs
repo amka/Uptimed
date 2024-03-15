@@ -88,4 +88,24 @@ public class MonitorsController(
         await monitorService.CreateMonitorAsync(monitor);
         return Created("CreateMonitorAsync", monitor);
     }
+    
+    [HttpPut("{monitorId}")]
+    public async Task<IActionResult> UpdateMonitorAsync(string monitorId, UpdateMonitorRequest request)
+    {
+        var user = await userManager.GetUserAsync(User);
+        if (user == null) return Unauthorized();
+        
+        var monitor = await monitorService.GetUserMonitorAsync(user, monitorId);
+        if (monitor == null) return NotFound();
+        
+        monitor.Alias = new Uri(request.Url).Host;
+        monitor.Url = request.Url;
+        monitor.RequestBody = request.RequestBody ?? "";
+        monitor.RequestMethod = request.RequestMethod ?? "GET";
+        monitor.RequestTimeout = request.RequestTimeout ?? 30;
+        monitor.UpdatedAt = DateTime.UtcNow;
+        
+        await monitorService.UpdateMonitorAsync(monitor);
+        return Ok(monitor);
+    }
 }

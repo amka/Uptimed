@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using NanoidDotNet;
-using Uptimed.Data;
 
 namespace Uptimed.Models;
 

@@ -1,6 +1,6 @@
 namespace Uptimed.Models.Request;
 
-public record CreateMonitorRequest(
+public record UpdateMonitorRequest(
     string Url,
     string? RequestBody,
     string? RequestHeaders,

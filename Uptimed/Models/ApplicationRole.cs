@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Uptimed.Models;
 
-public class UptimedRole: IdentityRole
+public class UptimedRole : IdentityRole
 {
-    
 }
