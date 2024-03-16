@@ -16,11 +16,16 @@ services:
     image: ${DOCKER_REGISTRY-}apiservice
     networks:
       - service_network
+    ports:
+      - "8080:8080"
     build:
       context: .
       dockerfile: Uptimed/Dockerfile
+    depends_on:
+      - redis
     environment:
       - ConnectionStrings__UptimedJobs=redis:6379
+      - Jwt__Key="sd),iB-}y[EXCl>V^qq@F_oEHk&}.@|6AtcG4Dk[B)\")-}=+@y/u2y^68c9UY=M"
   
   workerservice:
     image: ${DOCKER_REGISTRY-}workerservice
@@ -29,5 +34,7 @@ services:
     build:
       context: .
       dockerfile: Uptimed.Worker/Dockerfile
+    depends_on:
+      - redis
     environment:
       - ConnectionStrings__UptimedJobs=redis:6379
