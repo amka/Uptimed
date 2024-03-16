@@ -4,6 +4,8 @@ using StackExchange.Redis;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
 // Add Jobs processing 
 var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("UptimedJobs")!);
 GlobalConfiguration.Configuration.UseRedisStorage(redis);
