@@ -4,10 +4,27 @@ networks:
   service_network:
 
 services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - service_network
+  
   redis:
     image: redis
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - service_network
+  
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    ports:
+      - "8123:8123"
+      - "9000:9000"
     restart: unless-stopped
     networks:
       - service_network
@@ -22,7 +39,9 @@ services:
       context: .
       dockerfile: Uptimed/Dockerfile
     depends_on:
+      - postgres
       - redis
+      - clickhouse
     environment:
       - ConnectionStrings__UptimedJobs=redis:6379
       - Jwt__Key="sd),iB-}y[EXCl>V^qq@F_oEHk&}.@|6AtcG4Dk[B)\")-}=+@y/u2y^68c9UY=M"
@@ -36,5 +55,12 @@ services:
       dockerfile: Uptimed.Worker/Dockerfile
     depends_on:
       - redis
+      - clickhouse
     environment:
       - ConnectionStrings__UptimedJobs=redis:6379
+
+  uptimed.worker:
+    image: uptimed.worker
+    build:
+      context: .
+      dockerfile: Uptimed.Worker/Dockerfile

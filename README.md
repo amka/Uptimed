@@ -1,5 +1,14 @@
 # Uptimed
 
-Self-hosted chat solution for a teams.
+Website monitoring service.
 
-Built on top of ASP.NET Core and ...database.
+## Stack
+
+- ASP.Net Core
+- Postgres
+- Redis
+- ClickHouse
+
+## System Design
+
+![img.png](docs/diagram.png)

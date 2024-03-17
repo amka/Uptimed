@@ -1,5 +1,6 @@
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
+using NanoidDotNet;
 using Uptimed.Data;
 using Uptimed.Models;
 using Uptimed.Shared;
@@ -35,15 +36,27 @@ public class MonitorService(UptimedDbContext db, ILogger<MonitorService> logger,
         await db.Monitors.AddAsync(monitor);
         await db.SaveChangesAsync();
 
-        jobClient.Enqueue(() => MonitoringService.GetMonitoringJobDoneAsync(
-            new MonitoringJob
-            {
-                Url = monitor.Url,
-                RequestMethod = monitor.RequestMethod,
-                RequestBody = monitor.RequestBody,
-                RequestTimeout = monitor.RequestTimeout
-            }
-        ));
+        monitor.JobId ??= await Nanoid.GenerateAsync(size: 32);
+        var job = new MonitoringJob
+        {
+            Url = monitor.Url,
+            RequestMethod = monitor.RequestMethod,
+            RequestBody = monitor.RequestBody,
+            RequestTimeout = monitor.RequestTimeout
+        };
+
+        // Create a new recurring job to call the monitoring service
+        RecurringJob.AddOrUpdate(monitor.JobId, () => MonitoringService.GetMonitoringJobDoneAsync(job), Cron.Minutely);
+
+        // jobClient.Enqueue(() => MonitoringService.GetMonitoringJobDoneAsync(
+        //     new MonitoringJob
+        //     {
+        //         Url = monitor.Url,
+        //         RequestMethod = monitor.RequestMethod,
+        //         RequestBody = monitor.RequestBody,
+        //         RequestTimeout = monitor.RequestTimeout
+        //     }
+        // ));
 
         return monitor;
     }
@@ -53,5 +66,16 @@ public class MonitorService(UptimedDbContext db, ILogger<MonitorService> logger,
         monitor.UpdatedAt = DateTime.UtcNow;
         db.Monitors.Update(monitor);
         await db.SaveChangesAsync();
+
+        monitor.JobId ??= await Nanoid.GenerateAsync(size: 32);
+        var job = new MonitoringJob
+        {
+            Url = monitor.Url,
+            RequestMethod = monitor.RequestMethod,
+            RequestBody = monitor.RequestBody,
+        };
+
+        // Create a new recurring job to call the monitoring service
+        RecurringJob.AddOrUpdate(monitor.JobId, () => MonitoringService.GetMonitoringJobDoneAsync(job), Cron.Minutely);
     }
 }
