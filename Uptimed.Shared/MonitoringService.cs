@@ -37,14 +37,15 @@ public static class MonitoringService
         await click.OpenAsync();
         await using var cmd =
             click.CreateCommand(
-                "INSERT INTO monitoring_logs (`datetime`, `url`, `method`, `body`, `status_code`, `latency`)" +
-                " VALUES (NOW(), {url}, {method}, {body}, {status_code}, {latency})");
+                "INSERT INTO monitoring_logs (`datetime`, `url`, `method`, `body`, `status_code`, `latency`, `user_agent`) VALUES" +
+                " VALUES (NOW(), {url}, {method}, {body}, {status_code}, {latency}, {user_agent})");
         // cmd.Parameters.AddWithValue("dt", DateTime.UtcNow);
         cmd.Parameters.AddWithValue("url", job.Url);
         cmd.Parameters.AddWithValue("method", job.RequestMethod);
         cmd.Parameters.AddWithValue("body", job.RequestBody);
         cmd.Parameters.AddWithValue("status_code", (int)response.StatusCode);
         cmd.Parameters.AddWithValue("latency", stopWatch.ElapsedMilliseconds);
+        cmd.Parameters.AddWithValue("user_agent", job.UserAgent?? UserAgent);
         cmd.ExecuteNonQuery();
 
         Console.WriteLine($"{job.RequestMethod} {job.Url} => {response.StatusCode}");
