@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using NanoidDotNet;
-using Uptimed.Data;
 
 namespace Uptimed.Models;
 
@@ -17,10 +16,14 @@ public class Monitor
     public string RequestMethod { get; set; } = "GET";
     public string RequestBody { get; set; } = "";
     public int RequestTimeout { get; set; } = 30;
+    
+    public bool IsEnabled { get; set; } = true;
 
     public string OwnerId { get; set; }
     public required ApplicationUser Owner { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+    public string? JobId { get; set; } = Nanoid.Generate(size: 32);
 }

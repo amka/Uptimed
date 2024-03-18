@@ -7,10 +7,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Uptimed.csproj", "./"]
-RUN dotnet restore "Uptimed.csproj"
+COPY ["Uptimed/Uptimed.csproj", "Uptimed/"]
+RUN dotnet restore "Uptimed/Uptimed.csproj"
 COPY . .
-WORKDIR "/src/"
+WORKDIR "/src/Uptimed"
 RUN dotnet build "Uptimed.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

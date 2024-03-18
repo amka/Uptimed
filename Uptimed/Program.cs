@@ -1,5 +1,8 @@
 using System.Text.Json.Serialization;
+using Hangfire;
+using Hangfire.Redis.StackExchange;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using Uptimed.Data;
 using Uptimed.Extensions;
 using Uptimed.Models;
@@ -19,7 +22,8 @@ public class Program
         builder.Services.AddControllers().AddJsonOptions(
             options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
         );
-        builder.Services.AddSignalR().AddJsonProtocol(options => {
+        builder.Services.AddSignalR().AddJsonProtocol(options =>
+        {
             options.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
         builder.Services.AddEndpointsApiExplorer();
@@ -33,11 +37,12 @@ public class Program
         // Add DB Contexts
         // Move the connection string to user secrets for release
         builder.Services.AddDbContext<UptimedDbContext>(opt =>
-            opt.UseSqlite("Data Source=uptimed.db;"));
-        
+            opt.UseSqlite(config.GetConnectionString("UptimedContext")!));
+
         // Register our TokenService dependency
         builder.Services.AddScoped<TokenService, TokenService>();
         builder.Services.AddScoped<MonitorService, MonitorService>();
+        builder.Services.AddScoped<MonitoringJobService, MonitoringJobService>();
 
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
@@ -57,6 +62,10 @@ public class Program
         // Add custom authentication through JWT
         builder.Services.AddUptimedAuthentication(config);
 
+        // Add Jobs processing 
+        var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("UptimedJobs")!);
+        builder.Services.AddHangfire(c => c.UseRedisStorage(redis));
+
         // Build the app
         var app = builder.Build();
 
@@ -66,13 +75,15 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        
+
         // app.UseHttpsRedirection();
         app.UseStatusCodePages();
 
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+
+        app.UseHangfireDashboard();
 
         app.Run();
     }

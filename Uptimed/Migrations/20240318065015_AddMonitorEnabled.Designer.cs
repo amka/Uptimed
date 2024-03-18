@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Uptimed.Data;
 
@@ -10,9 +11,11 @@ using Uptimed.Data;
 namespace Uptimed.Migrations
 {
     [DbContext(typeof(UptimedDbContext))]
-    partial class UptimedDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240318065015_AddMonitorEnabled")]
+    partial class AddMonitorEnabled
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
