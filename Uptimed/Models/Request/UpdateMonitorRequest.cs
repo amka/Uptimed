@@ -6,5 +6,6 @@ public record UpdateMonitorRequest(
     string? RequestHeaders,
     string? RequestMethod,
     int? RequestTimeout,
+    string? UserAgent,
     bool IsEnabled
 );

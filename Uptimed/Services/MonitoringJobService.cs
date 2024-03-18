@@ -13,7 +13,8 @@ public class MonitoringJobService
             Url = monitor.Url,
             RequestMethod = monitor.RequestMethod,
             RequestBody = monitor.RequestBody,
-            RequestTimeout = monitor.RequestTimeout
+            RequestTimeout = monitor.RequestTimeout,
+            UserAgent = monitor.UserAgent,
         };
 
         // // Create a new recurring job to call the monitoring service

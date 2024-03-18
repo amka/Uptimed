@@ -8,6 +8,9 @@ namespace Uptimed.Shared;
 
 public static class MonitoringService
 {
+    public static string UserAgent =
+        "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/ Mobile Safari/537.36 (compatible; UptimedBot/0.1; +https://uptimed.ru/bot.html)";
+
     [Queue("default")]
     [DisplayName("JobId: {1}")]
     [AutomaticRetry(Attempts = 3, DelaysInSeconds = [2, 5, 10])]
@@ -20,7 +23,8 @@ public static class MonitoringService
         {
             Method = new HttpMethod(job.RequestMethod),
             RequestUri = new Uri(job.Url),
-            Content = new StringContent(job.RequestBody)
+            Content = new StringContent(job.RequestBody),
+            Headers = { { "user-agent", job.UserAgent ?? UserAgent} }
         };
 
         var stopWatch = new Stopwatch();

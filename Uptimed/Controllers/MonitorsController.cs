@@ -81,6 +81,7 @@ public class MonitorsController(
             RequestBody = request.RequestBody ?? "",
             RequestMethod = request.RequestMethod ?? "GET",
             RequestTimeout = request.RequestTimeout ?? 30,
+            UserAgent = request.UserAgent,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -103,6 +104,7 @@ public class MonitorsController(
         monitor.RequestBody = request.RequestBody ?? "";
         monitor.RequestMethod = request.RequestMethod ?? "GET";
         monitor.RequestTimeout = request.RequestTimeout ?? 30;
+        monitor.UserAgent = request.UserAgent;
         monitor.IsEnabled = request.IsEnabled; 
         monitor.UpdatedAt = DateTime.UtcNow;
 

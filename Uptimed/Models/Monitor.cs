@@ -16,7 +16,8 @@ public class Monitor
     public string RequestMethod { get; set; } = "GET";
     public string RequestBody { get; set; } = "";
     public int RequestTimeout { get; set; } = 30;
-    
+    public string? UserAgent { get; set; } = null;
+
     public bool IsEnabled { get; set; } = true;
 
     public string OwnerId { get; set; }

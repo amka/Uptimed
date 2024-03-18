@@ -5,5 +5,6 @@ public record CreateMonitorRequest(
     string? RequestBody,
     string? RequestHeaders,
     string? RequestMethod,
+    string? UserAgent,
     int? RequestTimeout
 );
