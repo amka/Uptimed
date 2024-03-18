@@ -1,4 +1,4 @@
-﻿namespace Uptimed.Shared;
+﻿namespace Uptimed.Shared.Models;
 
 public class MonitoringJob
 {

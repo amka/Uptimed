@@ -1,24 +1,31 @@
-using ClickHouse.Client.ADO;
 using Hangfire;
 using Hangfire.Redis.StackExchange;
+using Octonica.ClickHouseClient;
 using StackExchange.Redis;
-using Uptimed.Worker;
+using Uptimed.Shared;
+using Uptimed.Worker.Jobs;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
 // Add Jobs processing 
-await using var connection = new ClickHouseConnection(builder.Configuration.GetConnectionString("UptimedLogs")!);
-builder.Services.AddTransient<ClickHouseConnection>();
+// Init ClickHouse connection
 
-var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("UptimedJobs")!);
-GlobalConfiguration.Configuration.UseRedisStorage(redis)
-    .UseActivator(new ContainerJobActivator(builder.Services.BuildServiceProvider()));
+// Init Redis connection
+builder.Services.AddScoped<ICallMonitoringJob, CallMonitoringJob>(sp => new CallMonitoringJob(
+    new HttpClient(),
+    new ClickHouseConnection(builder.Configuration.GetConnectionString("UptimedLogs")!)
+));
 
-using var server = new BackgroundJobServer();
-Console.WriteLine("Hangfire Server started. Press any key to exit...");
+// Init Hangfire
+builder.Services.AddHangfire(configuration =>
+{
+    var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("UptimedJobs")!);
+    configuration.UseRedisStorage(redis);
+});
+builder.Services.AddHangfireServer();
 
 
 var host = builder.Build();
-host.Run();
+await host.RunAsync();
