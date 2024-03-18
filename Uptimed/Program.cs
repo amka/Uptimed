@@ -37,11 +37,12 @@ public class Program
         // Add DB Contexts
         // Move the connection string to user secrets for release
         builder.Services.AddDbContext<UptimedDbContext>(opt =>
-            opt.UseSqlite("Data Source=uptimed.db;"));
+            opt.UseSqlite(config.GetConnectionString("UptimedContext")!));
 
         // Register our TokenService dependency
         builder.Services.AddScoped<TokenService, TokenService>();
         builder.Services.AddScoped<MonitorService, MonitorService>();
+        builder.Services.AddScoped<MonitoringJobService, MonitoringJobService>();
 
         // Specify identity requirements
         // Must be added before .AddAuthentication otherwise a 404 is thrown on authorized endpoints
