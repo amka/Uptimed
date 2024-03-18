@@ -9,8 +9,7 @@ namespace Uptimed.Worker.Jobs;
 internal class CallMonitoringJob(HttpClient client, ClickHouseConnection chConnection)
     : ICallMonitoringJob
 {
-    private const string UserAgent =
-        "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/ Mobile Safari/537.36 (compatible; UptimedBot/0.1; +https://uptimed.ru/bot.html)";
+    private const string UserAgent = "Mozilla/5.0 (compatible; UptimedBot/0.1; +https://uptimed.ru/bots)";
 
     public async Task ExecuteAsync(MonitoringJob job)
     {
@@ -40,15 +39,7 @@ internal class CallMonitoringJob(HttpClient client, ClickHouseConnection chConne
     private async Task SaveLogAsync(MonitoringJobLog jobLog)
     {
         await using var cmd = chConnection.CreateCommand(
-            "INSERT INTO monitoring_logs (" +
-            "`datetime`, " +
-            "`url`, " +
-            "`method`, " +
-            "`body`, " +
-            "`status_code`, " +
-            "`latency`, " +
-            "`user_agent`" +
-            ") VALUES" +
+            "INSERT INTO monitoring_logs (`datetime`, `url`, `method`, `body`, `status_code`, `latency`, `user_agent`)" +
             " VALUES (NOW(), {url}, {method}, {body}, {status_code}, {latency}, {user_agent})");
         cmd.Parameters.AddWithValue("dt", jobLog.DateTime);
         cmd.Parameters.AddWithValue("url", jobLog.Url);
