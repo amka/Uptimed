@@ -8,6 +8,24 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=uptimed_dev
+      - POSTGRES_PASSWORD=uptimed_dev
+      - POSTGRES_DB=uptimed_dev
+    volumes:
+      - .data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - service_network
+  
+  mariadb:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=uptimed_dev
+    volumes:
+      - .data:/var/lib/mysql:Z
     restart: unless-stopped
     networks:
       - service_network
@@ -43,6 +61,7 @@ services:
       - redis
       - clickhouse
     environment:
+      - ConnectionStrings__UptimedContext=Host=postgres;Database=uptimed_dev;Username=uptimed_dev;Password=uptimed_dev;
       - ConnectionStrings__UptimedJobs=redis:6379
       - Jwt__Key="sd),iB-}y[EXCl>V^qq@F_oEHk&}.@|6AtcG4Dk[B)\")-}=+@y/u2y^68c9UY=M"
   
@@ -58,9 +77,3 @@ services:
       - clickhouse
     environment:
       - ConnectionStrings__UptimedJobs=redis:6379
-
-  uptimed.worker:
-    image: uptimed.worker
-    build:
-      context: .
-      dockerfile: Uptimed.Worker/Dockerfile

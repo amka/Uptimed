@@ -18,6 +18,17 @@ public class UptimedDbContext : IdentityDbContext<ApplicationUser, UptimedRole, 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ApplicationUser>(e =>
+        {
+            e.Property(u => u.Id).HasMaxLength(32);
+            e.HasIndex(u => u.UserName).IsUnique(false);
+        });
+        
+        modelBuilder.Entity<UptimedRole>(e =>
+        {
+            e.Property(u => u.Id).HasMaxLength(32);
+        });
     }
     // public DbSet<MonitorLog> MonitorLogs { get; set; }
 }

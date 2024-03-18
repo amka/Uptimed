@@ -5,5 +5,6 @@ public record UpdateMonitorRequest(
     string? RequestBody,
     string? RequestHeaders,
     string? RequestMethod,
-    int? RequestTimeout
+    int? RequestTimeout,
+    bool IsEnabled
 );

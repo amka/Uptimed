@@ -29,7 +29,7 @@ public static class MonitoringService
         stopWatch.Stop();
 
         // Store response data in ClickHouse as logs
-        ClickHouseConnection click = new("Host=localhost;");
+        ClickHouseConnection click = new("Host=localhost");
         await click.OpenAsync();
         await using var cmd =
             click.CreateCommand(

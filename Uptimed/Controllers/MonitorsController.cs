@@ -103,6 +103,7 @@ public class MonitorsController(
         monitor.RequestBody = request.RequestBody ?? "";
         monitor.RequestMethod = request.RequestMethod ?? "GET";
         monitor.RequestTimeout = request.RequestTimeout ?? 30;
+        monitor.IsEnabled = request.IsEnabled; 
         monitor.UpdatedAt = DateTime.UtcNow;
 
         await monitorService.UpdateMonitorAsync(monitor);

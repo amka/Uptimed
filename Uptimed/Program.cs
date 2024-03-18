@@ -37,7 +37,10 @@ public class Program
         // Add DB Contexts
         // Move the connection string to user secrets for release
         builder.Services.AddDbContext<UptimedDbContext>(opt =>
-            opt.UseSqlite(config.GetConnectionString("UptimedContext")!));
+            opt.UseMySql(config.GetConnectionString("UptimedContext")!,
+                ServerVersion.AutoDetect(config.GetConnectionString("UptimedContext"))
+            )
+        );
 
         // Register our TokenService dependency
         builder.Services.AddScoped<TokenService, TokenService>();
